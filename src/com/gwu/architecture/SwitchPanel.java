@@ -5,21 +5,29 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 public class SwitchPanel extends JPanel {
 
 	class switchThread extends Thread {		//thread class used for exchange information between computer and gui
+		
+		public int step;
+		
 		public void run() {
 			synchronized (SwitchPanel.class) {
 				while(threadFlag==1);		//lock, serialize the thread
 				threadFlag=1;
-				gwuComputer.step();
+				if(step==1)
+					gwuComputer.step();
+				else 
+					gwuComputer.run();
 				gwuGui.refresh();
 				threadFlag=0;
 			}
@@ -35,6 +43,7 @@ public class SwitchPanel extends JPanel {
 	JButton[] button;
 	ImageIcon[] icon;
 	JRadioButton[] radioButton;
+	JFileChooser fileChooser;
 	// claim a flag used to indicate if the computer is powerup or powerdown
 	int flag;
 	switchThread thread;
@@ -57,9 +66,13 @@ public class SwitchPanel extends JPanel {
 		button[0] = new JButton("step");
 		button[1] = new JButton("run");
 		button[2] = new JButton("stop");
+		button[3] = new JButton("choose an assembly file");
+		button[4] = new JButton("choose a decimal file");
+		
+		fileChooser = new JFileChooser();
 
 		radioButton = new JRadioButton[6];
-		radioButton[4] = new JRadioButton(icon[0]);
+		radioButton[0] = new JRadioButton(icon[0]);
 
 		flag = 0;
 
@@ -73,15 +86,23 @@ public class SwitchPanel extends JPanel {
 		/***********************init swithc panel's ui******************************/
 		setBorder(BorderFactory.createEtchedBorder());
 		setLayout(layout);
-		constraints.ipadx = 25;
-		constraints.ipady = 25;
-		constraints.insets = new Insets(20, 20, 20, 20);
+		constraints.insets = new Insets(1, 1, 1, 1);
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.anchor = GridBagConstraints.CENTER;
+		
+		setConstraints(0, 0, 1, 1, 4, 3);
 		add(button[0], constraints);
+		setConstraints(1, 0, 1, 1, 4, 3);
 		add(button[1], constraints);
+		setConstraints(2, 0, 1, 1, 4, 3);
 		add(button[2], constraints);
-		add(radioButton[4], constraints);
+		setConstraints(0, 1, 1, 1, 4, 3);
+		add(button[3], constraints);
+		setConstraints(1, 1, 1, 1, 4, 3);
+		add(button[4], constraints);
+		setConstraints(2, 1, 1, 1, 4, 3);
+		add(radioButton[0], constraints);
+		
 		/***********************init swithc panel's ui******************************/
 		
 		//when step was pressed
@@ -91,7 +112,10 @@ public class SwitchPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				thread = new switchThread();
+				thread.step=1;
 				thread.start();
+				while(thread.isAlive()==false)
+					gwuGui.refresh();
 			}
 		});
 		
@@ -100,23 +124,74 @@ public class SwitchPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				gwuGui.gwuConsolePanel.append("(Button)run: codes are waited to be added!\n");
+				thread = new switchThread();
+				thread.step=0;
+				thread.start();
 			}
 		});
 		
 		button[2].addActionListener(new ActionListener() {
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				gwuGui.gwuConsolePanel.append("(Button)stop: codes are waited to be added!\n");
+				thread.suspend();
+				gwuGui.refresh();
+			}
+		});
+		
+		button[3].addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				int res=fileChooser.showOpenDialog(null);
+				if(res == JFileChooser.APPROVE_OPTION) {
+					String tString = fileChooser.getSelectedFile().toString();
+					tString = tString.replace('\\', '/');
+					CardReader cardReader = gwuComputer.gwuIO.gwuCardReader;
+					try {
+						cardReader.loadCard(tString);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					for(int i=0; i<cardReader.fileLength; i++)	//did not write in rom using assembly, should be written in future
+						gwuComputer.gwuMemory.storeData(i, Integer.parseInt(cardReader.cardStrings[i]));
+					gwuGui.refresh();
+					
+				}
+			}
+		});
+		
+		button[4].addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				int res=fileChooser.showOpenDialog(null);
+				if(res == JFileChooser.APPROVE_OPTION) {
+					String tString = fileChooser.getSelectedFile().toString();
+					tString = tString.replace('\\', '/');
+					CardReader cardReader = gwuComputer.gwuIO.gwuCardReader;
+					try {
+						cardReader.loadCard1(tString);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					for(int i=0; i<cardReader.fileLength; i++)	//did not write in rom using assembly, should be written in future
+						gwuComputer.gwuMemory.storeData(i, Integer.parseInt(cardReader.cardStrings[i]));
+					gwuGui.refresh();
+				}
 			}
 		});
 		
 		
 		// ActionListener of radioButton, which implements the action of
 		// computer powerup and powerdowm
-		radioButton[4].addActionListener(new ActionListener() {
+		radioButton[0].addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -128,9 +203,11 @@ public class SwitchPanel extends JPanel {
 					gwuComputer.powerdown();
 					gwuGui.powerdown();
 				}
-				radioButton[4].setIcon(icon[flag]);
+				radioButton[0].setIcon(icon[flag]);
 			}
 		});
+		
+		
 
 	}
 
@@ -157,6 +234,17 @@ public class SwitchPanel extends JPanel {
 		} else {
 
 		}
+	}
+	
+	/******************************operation for panel*******************************************/
+	public void setConstraints(int gridx, int gridy, int gridwidth,
+			int gridheight, double weightx, double weighty) {
+		constraints.gridx = gridx;
+		constraints.gridy = gridy;
+		constraints.gridheight = gridheight;
+		constraints.gridwidth = gridwidth;
+		constraints.weightx = weightx;
+		constraints.weighty = weighty;
 	}
 
 }

@@ -27,15 +27,20 @@ public class Computer {
 
 	public void powerup() { // start up the computer
 		gwuCpu.powerup();
-		gwuIO.powerup();
 		gwuMemory.powerup();
-		fetchInstruction();
+		gwuIO.powerup();
+		//fetchInstruction();
+		//CardReader cardReader = gwuIO.gwuCardReader;
+	//	int len = cardReader.fileLength;
+	//	for(int i=0; i<len; i++) {
+		//	gwuMemory.storeData(i, Integer.parseInt(cardReader.cardStrings[i]));
+	//	}
 	}
 
 	public void powerdown() { // shutdown the computer
-		gwuCpu.powerdown();
 		gwuIO.powerdown();
 		gwuMemory.powerdown();
+		gwuCpu.powerdown();
 	}
 
 	public void destory() {
@@ -74,13 +79,29 @@ public class Computer {
 	/*
 	 * routine for Main
 	 */
-	public void step() {
+	public void step() {		//fuction for switch step
+		fetchInstruction();
 		decode();
 		effAddress();
 		execute();
 		storeResult();
 		nextInstruction();
-		fetchInstruction();
+	}
+	
+	public void run() {		//fuction for switch run
+		while(true) {
+			//if(gwuCpu.PC.value==265)
+				//break;
+			fetchInstruction();	
+			decode();
+			if(gwuCpu.IR.value==0)
+				break;
+			effAddress();
+			execute();
+			storeResult();
+			nextInstruction();
+			
+		}
 	}
 
 }

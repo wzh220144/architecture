@@ -52,6 +52,7 @@ public class Compiler {
 	}
 
 	public static String AssemblyToInteger(String a) {		//used for converting assembly to integer
+		String tt=new String(a);
 		a=a.replaceAll("\n", "");
 		a=a.replaceAll("[^a-zA-Z0-9 ]", "");
 		String[] tString = a.split(" +");
@@ -59,6 +60,7 @@ public class Compiler {
 		int instruction = 0;
 		int i, temp = 0, opcode = 0;
 		for (i = 0; i < l; i++) {
+			
 			if (i == 0) { // the first assembly
 				if (tString[i].equals("LDR")) {
 					instruction += 1 << 14;
@@ -195,14 +197,14 @@ public class Compiler {
 				}
 
 				else if (opcode == 6) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 
 				else if (opcode == 7) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
@@ -244,7 +246,7 @@ public class Compiler {
 				}
 				
 				else if (opcode == 13) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -265,42 +267,42 @@ public class Compiler {
 				}
 				
 				else if (opcode == 16) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 17) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 18) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 19) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 20) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 21) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
@@ -335,21 +337,21 @@ public class Compiler {
 				}
 				
 				else if (opcode == 49) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 50) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 51) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
@@ -363,84 +365,84 @@ public class Compiler {
 			else if (i == 2) { // the third assembly
 				temp = Integer.parseInt(tString[i]);
 				if (opcode == 1) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 2) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 
 				else if (opcode == 3) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 
 				else if (opcode == 4) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 
 				else if (opcode == 5) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 
 				else if (opcode == 6) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 
 				else if (opcode == 7) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 8) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 9) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 10) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 11) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 12) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
@@ -451,49 +453,49 @@ public class Compiler {
 				}
 				
 				else if (opcode == 14) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 15) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 16) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 17) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 18) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 19) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 20) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
@@ -518,35 +520,35 @@ public class Compiler {
 				}
 
 				else if (opcode == 33) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 
 				else if (opcode == 34) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 49) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 50) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 51) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -560,33 +562,33 @@ public class Compiler {
 			else if (i == 3) {		//the forth assemble
 				temp = Integer.parseInt(tString[i]);
 				if (opcode == 1) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				} else if (opcode == 2) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 
 				else if (opcode == 3) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 
 				else if (opcode == 4) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 
 				else if (opcode == 5) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
@@ -601,35 +603,35 @@ public class Compiler {
 				}
 				
 				else if (opcode == 8) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 9) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 10) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 11) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 12) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -640,14 +642,14 @@ public class Compiler {
 				}
 				
 				else if (opcode == 14) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
 				}
 				
 				else if (opcode == 15) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 12;
@@ -678,28 +680,28 @@ public class Compiler {
 				}
 				
 				else if (opcode == 25) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 				
 				else if (opcode == 26) {
-					if ((temp > 4) || (temp < 0)) {
+					if ((temp > 3) || (temp < 0)) {
 						break;
 					}
 					instruction += temp << 10;
 				}
 
 				else if (opcode == 33) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 
 				else if (opcode == 34) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -725,33 +727,33 @@ public class Compiler {
 			else if (i == 4) {	//the fifth assemble
 				temp = Integer.parseInt(tString[i]);
 				if (opcode == 1) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				} else if (opcode == 2) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 
 				else if (opcode == 3) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 
 				else if (opcode == 4) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 
 				else if (opcode == 5) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -766,21 +768,21 @@ public class Compiler {
 				}
 				
 				else if (opcode == 8) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 9) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 10) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -799,14 +801,14 @@ public class Compiler {
 				}
 				
 				else if (opcode == 14) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 15) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -837,14 +839,14 @@ public class Compiler {
 				}
 				
 				else if (opcode == 25) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
 				}
 				
 				else if (opcode == 26) {
-					if ((temp < 0) || (temp > 256)) {
+					if ((temp < 0) || (temp > 255)) {
 						break;
 					}
 					instruction += temp;
@@ -885,9 +887,36 @@ public class Compiler {
 			}
 
 		}
-		if (i == l)
+		if (i == l) {
+			//System.out.println(Integer.toString(instruction));
 			return Integer.toString(instruction);
-		return "";
+		}
+		else {
+			char[] tchar;
+			int j;
+			tchar = tt.toCharArray();
+			int tl=tchar.length;
+			if(tl==1) {
+			//	System.out.println(Integer.toString(tchar[0]));
+				return Integer.toString(tchar[0]);
+			}
+			tt=tt.replace("\n", "");
+			tchar = tt.toCharArray();
+			tl=tchar.length;
+			if(tl==1) {
+			//	System.out.println(tchar[0]);
+				return Integer.toString(tchar[0]);
+			}
+			for(j=0; j<tl; j++) {
+				if( (tchar[j]>'9') || (tchar[j]<'0') )
+					break;
+			}
+			if(j==tl) {
+			//	System.out.println(Integer.toString(Integer.parseInt(tt)));
+				return Integer.toString(Integer.parseInt(tt));
+			}
+			return "";
+		}
 	}
 	
 	public static void main(String[] args) {

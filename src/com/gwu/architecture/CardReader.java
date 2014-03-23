@@ -1,10 +1,10 @@
 package com.gwu.architecture;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
 public class CardReader {
 	
@@ -25,7 +25,6 @@ public class CardReader {
 	InputStreamReader fileStreamReader;
 	InputStream fileStream;
 	char[] cardChar;
-	Scanner scanner;
 	String logString;
 	String cardString;
 	String[] cardStrings;
@@ -35,6 +34,26 @@ public class CardReader {
 		fileStream = this.getClass().getResourceAsStream("Card1");
 		fileStreamReader = new InputStreamReader(fileStream);
 		logString = new String();
+		
+		
+	}
+	
+	public void powerup() {
+		
+		logString = "";
+		flag=1;
+		init();
+	}
+
+	public void powerdown() {
+		
+	}
+
+	public void destroy() {
+		
+	}
+
+	public void init() {
 		try {
 			cardChar = new char[fileStream.available()];
 		} catch (IOException e) {
@@ -48,32 +67,62 @@ public class CardReader {
 			logString+=e;
 		}
 		cardString = new String(cardChar);
-	}
-	
-	public void powerup() {
+		
 		command = 6;
 		
-		logString = "";
 		cardStrings = cardString.split("\n");
 		fileLength = cardStrings.length;
 		for(int i=0; i<fileLength; i++) {
 			cardStrings[i]=cardStrings[i].replaceAll("[^0-9]", "");;
 		}
 		curLine=0;
-		flag=1;
 	}
-
-	public void powerdown() {
+	
+	/***************************************operation for other class
+	 * @throws IOException *******************************************/
+	public void loadCard(String string) throws IOException {
+		String[] tStrings;
+		String tString;
+		InputStream inputStream = new FileInputStream(string);
+		char[] tchar;
 		
+		//read assembly file to memory
+		InputStreamReader reader = new InputStreamReader(inputStream);
+		tchar = new char[inputStream.available()];
+		reader.read(tchar);
+		tString = new String(tchar);
+		tStrings = tString.split("\n");
+		fileLength = tStrings.length;
+		cardStrings = new String[fileLength+1];
+		reader.close();
+		for(int i=0; i<fileLength; i++) {
+			tStrings[i]=tStrings[i].replaceAll("\r", "\n");
+			cardStrings[i] = new String(Compiler.AssemblyToInteger(tStrings[i]));
+		}
 	}
-
-	public void destroy() {
+	
+	public void loadCard1(String string) throws IOException {
+		String[] tStrings;
+		String tString;
+		InputStream inputStream = new FileInputStream(string);
+		char[] tchar;
 		
+		//read assembly file to memory
+		InputStreamReader reader = new InputStreamReader(inputStream);
+		tchar = new char[inputStream.available()];
+		reader.read(tchar);
+		tString = new String(tchar);
+		tStrings = tString.split("\n");
+		fileLength = tStrings.length;
+		cardStrings = new String[fileLength+1];
+		reader.close();
+		for(int i=0; i<fileLength; i++) {
+			tStrings[i].replaceAll("\r", "");
+			cardStrings[i] = tStrings[i];
+		}
 	}
-
-	public void init() {
-		
-	}
+	
+	/***************************************operation for in/out/chk command*************************************/
 	
 	public int in() {
 		int res=0;
@@ -141,13 +190,11 @@ public class CardReader {
 		return res;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		CardReader cardReader = new CardReader();
 		cardReader.powerup();
-		
-		System.out.println("in: " + cardReader.in());
-		cardReader.out(0);
-		System.out.println("in: " + cardReader.in());
+		cardReader.loadCard("D:/wzhmmq/workspace/architecture/card");
+		System.out.println(cardReader.cardStrings[0]);
 	}
 	
 }

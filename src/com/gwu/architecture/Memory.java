@@ -46,9 +46,6 @@ public class Memory {
 	public void powerup() {
 		for (int i = 0; i < RAM; i++)
 			write(i, 0);
-		write(0, 16387);
-		write(1, 32770);
-		write(3, 10);
 		for(int i=0; i<CACHE; i++) {
 			cacheTag[i]=0;
 			for(int j=0; j<WORD; j++)
@@ -59,6 +56,8 @@ public class Memory {
 				queue[i][j]=j;
 			}
 		}
+		init();
+		
 	}
 
 	public void powerdown() {
@@ -70,6 +69,7 @@ public class Memory {
 	}
 
 	public void init() {
+
 	}
 
 	/****************************************************************************************************/

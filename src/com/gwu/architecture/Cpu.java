@@ -415,6 +415,7 @@ public class Cpu {
 			transfer(CONTRL, OPCODE);
 			transfer(OP[0], -OP[0].value);
 			transfer(RES[0], OP[1].value + OP[0].value);
+			transfer(OP[0], -OP[0].value);
 			setFlowFlag(RES[0].value);
 		}// SMR I, r, x:address
 
@@ -446,6 +447,7 @@ public class Cpu {
 					transfer(CONTRL, OPCODE);
 					transfer(OP[0], -OP[0].value);
 					transfer(RES[0], OP[1].value + OP[0].value);
+					transfer(OP[0], -OP[0].value);
 					setFlowFlag(RES[0].value);
 					transfer(R[RI.value], RES[0]);
 				}
@@ -649,7 +651,7 @@ public class Cpu {
 		
 		//JCC I, cc, x, address
 		else if(OPCODE.value == 10) {
-			transfer(CCI, RI);
+			transfer(CCI, 3-RI.value);
 			if( (CC.value&Power[CCI.value])==Power[CCI.value] )
 				transfer( BOP[0], 1);
 			else transfer(BOP[0], 0);
@@ -671,9 +673,8 @@ public class Cpu {
 		
 		//RFS immed
 		else if(OPCODE.value == 13) {
-			storeData(R[0], ADDRESS, gwuMemory);
 			transfer(BOP[0], 1);
-			transfer(BOP[1], R[3].value);
+			transfer(BOP[1], EA);
 		}//RFS immed
 		
 		//SOB I, r, x, address
@@ -694,7 +695,7 @@ public class Cpu {
 		
 		//JGE I, r, x, address
 		else if(OPCODE.value == 15) {
-			if(R[RI.value].value>=0) {
+			if(R[RI.value].TrueValue()>=0) {
 				transfer(BOP[0], 1);
 			}
 			else {

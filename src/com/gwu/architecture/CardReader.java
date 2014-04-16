@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 public class CardReader {
 	
@@ -90,13 +93,49 @@ public class CardReader {
 		InputStreamReader reader = new InputStreamReader(inputStream);
 		tchar = new char[inputStream.available()];
 		reader.read(tchar);
+		tString = "asdfasf";
 		tString = new String(tchar);
+		tString = tString.replaceAll("(\r\n)+", "\n");
+		tString= tString.replaceAll("\r", "\n");
+		tString = tString.replaceAll("[ \t]*/.*", "");
+		tString = tString.replaceAll("\n+", "\n");
 		tStrings = tString.split("\n");
 		fileLength = tStrings.length;
 		cardStrings = new String[fileLength+1];
 		reader.close();
+		Map<String, String> tmap = new HashMap<String, String>();
+		Vector<String> tVector = new Vector<String>();
+		tVector.clear();
+		tmap.clear();
 		for(int i=0; i<fileLength; i++) {
-			tStrings[i]=tStrings[i].replaceAll("\r", "\n");
+			if(tStrings[i].matches("^.+:.+") == true) {
+				String key = tStrings[i].split(":")[0];
+				int value;
+				if(i>255)
+					value = i-256;
+				else
+					value = i;
+				assert tmap.containsKey(key) == false;
+					
+				tmap.put(key, Integer.toString(value));
+				tVector.add(key);
+			}
+		}
+		int vlen = tVector.size();
+	//	for(int j=0; j<vlen; j++) {
+			//System.out.println(tVector.get(j) + " " + tmap.get(tVector.get(j)));
+		//}
+		//System.out.println();
+		for(int i=0; i<fileLength; i++) {
+			tStrings[i] = tStrings[i].replaceAll("^.+:[ \t]*", "");
+			//System.out.println(tStrings[i]);
+			for(int j=0; j<vlen; j++) {
+				tStrings[i]=tStrings[i].replaceAll("[ \t]+" + tVector.get(j) + "[ \t]+" , " "  + tmap.get(tVector.get(j)) + " " );
+				tStrings[i]=tStrings[i].replaceAll("^" + tVector.get(j) + "[ \t]+" , tmap.get(tVector.get(j)) + " " );
+				tStrings[i]=tStrings[i].replaceAll("[ \t]+" + tVector.get(j) + "$", " "  + tmap.get(tVector.get(j)));
+				tStrings[i]=tStrings[i].replaceAll("^" + tVector.get(j) + "$", "0"+tmap.get(tVector.get(j)));
+			}
+			System.out.println(tStrings[i]);
 			cardStrings[i] = new String(Compiler.AssemblyToInteger(tStrings[i]));
 		}
 	}

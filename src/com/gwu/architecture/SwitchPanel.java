@@ -157,8 +157,9 @@ public class SwitchPanel extends JPanel {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					for(int i=0; i<cardReader.fileLength; i++)	//did not write in rom using assembly, should be written in future
+					for(int i=0; i<cardReader.fileLength; i++) {	//did not write in rom using assembly, should be written in future
 						gwuComputer.gwuMemory.storeData(i, Integer.parseInt(cardReader.cardStrings[i]));
+					}
 					gwuGui.refresh();
 					
 				}

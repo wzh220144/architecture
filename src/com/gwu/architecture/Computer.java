@@ -90,7 +90,7 @@ public class Computer {
 	
 	public void run() {		//fuction for switch run
 		while(true) {
-			//if(gwuCpu.PC.value==265)
+			//if(gwuCpu.PC.value==83)
 				//break;
 			fetchInstruction();	
 			decode();

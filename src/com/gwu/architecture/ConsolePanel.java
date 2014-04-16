@@ -61,7 +61,7 @@ public class ConsolePanel extends JPanel {
 				if(e.getKeyCode()==16)
 					return ;
 				synchronized (ConsolePanel.class) {
-					keycode = e.getKeyCode();
+					keycode = e.getKeyChar();
 				}
 			}
 		});

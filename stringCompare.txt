@@ -1,0 +1,530 @@
+JMP 0 0 A
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 255
+AIR 0 1
+STR 0 0 0 1
+STX 0 1 1		//X[1]=256
+A:LDR 0 1 1 LEN1		/*********PRINT STRING 1*******************/
+STR 0 1 0 1		//STORE STRING1'S LEN IN ADDRESS[1]
+LDR 0 1 1 STRING1
+STR 0 1 0 2		//STORE STRING1'S ADDRESS IN ADDRESS[2]
+LDR 0 1 0 0
+SMR 0 1 0 0		//CLEAR R[1]
+AIR 1 C
+STR 0 1 0 3		//STORE RETURN ADDRESS
+JMP 0 0 D		//PRINT STRING
+
+C:LDR 0 1 0 0			/*****************INPUT 10 STRING*******************/
+
+SMR 0 1 0 0
+AIR 1 10			//INIT R[1]=10
+LDR 0 0 0 0
+SMR 0 0 0 0			//R[0]=0
+AIR 0 DATA0			//R[0]=DATA0
+AIR 0 255			//R[0]=DATA0+255
+AIR 0 1
+STR 0 0 1 string0	//ADDRESS[STRING0]=DATA0
+LDR 0 0 0 0
+SMR 0 0 0 0			//R[0]=0
+AIR 0 string0		//R[0]=STRING0
+AIR 0 255
+AIR 0 1
+STR 0 0 0 3			//SOTRE R[0] IN ADDRESS[3]
+LDR 0 0 0 0
+SMR 0 0 0 0			//R[0]=0
+AIR 0 len0		//R[0]=LEN0
+STR 0 0 0 4			//SOTRE R[0] IN ADDRESS[4]
+LDR 0 0 0 0
+SMR 0 0 0 0			//R[0]=0
+STR 0 0 0 len0		//ADDRESS[LEN0]=0
+
+H:STR 0 1 0 1		//STORE COUNTER TO ADDRESS[1]
+LDR 0 2 0 1
+SMR 0 2 0 1		//R[2]=0
+STR 1 2 0 4		//ADDRESS[LEN]=0;
+STR 1 3 0 3		//ADDRESS[STRING] = R[3]
+LDR 0 0 0 0
+SMR 0 0 0 0		//R[0]=0
+AIR 0 F			//R[0]=RETURN ADDRESS
+STR 0 0 0 2		//SOTRE R[0] IN ADDRESS[2]
+JMP 0 0 G		//INPUT STRING
+
+F:LDR 0 1 0 1	//R[1]<---COUNTER
+SIR 1 1
+JZ 0 1 0 E		//IF R[1]==0, BREAK LOOP
+LDR 1 3 0 3		//R[3]=ADDRESS[STRING]
+AMR 1 3 0 4			//R[3]=ADDRESS[STRING]+ADDRESS[LEN]
+LDR 0 2 0 3
+AIR 2 2
+STR 0 2 0 3		//ADDRESS[3]=ADDRESS[3]+2
+LDR 0 2 0 4
+AIR 2 2
+STR 0 2 0 4		//ADDRESS[4]=ADDRESS[4]+2
+JMP 0 0 H
+
+
+/*******************************OUTPUT 10 STRINGS*****************************************/
+E:LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 string0
+AIR 0 255
+AIR 0 1			//R[0]=STRING0+256
+STR 0 0 0 2		//ADDRESS[2]=STRING0
+AIR 0 1
+STR 0 0 0 1		//ADDRESS[1]=LEN
+LDR 0 0 0 0
+SMR 0 0 0 0		//R[0]=0;
+AIR 0 10		//R[0]=10;
+K:JZ 0 0 0 I		//R[0]==0, BREAK LOOP
+STR 0 0 0 4		//ADDRESS[4]=COUNT
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 J			//R[0]=J
+STR 0 0 0 3		//ADDRESS[3]=RETURN ADDRESS
+JMP 0 0 D
+J:LDR 0 0 0 4
+SIR 0 1			//COUNT--
+JMP 0 0 K
+
+
+/*********************************SORT STRING*****************************************/
+I:LDR 0 0 0 0
+SMR 0 0 0 0		//R[0]=0
+AIR 0 10		//R[0]=COUNT
+
+Q:JZ 0 0 0 L	//IF COUNT == 0, BREAK LOOP
+STR 0 0 0 1		//[1]=COUNT
+SIR 0 1			//[1]=COUNT-1
+STR 0 0 0 3
+AMR 0 0 0 3		//[3]=2*COUNT-2
+LDR 0 0 0 3		//R0=2*COUNT-2
+AIR 0 string0	//R0=STRING[I]
+AIR 0 255
+AIR 0 1			//R[0]=STRING[I]+256
+STR 0 0 0 3		//[3]=STRING[I]
+AIR 0 1			//R0=LEN[I]
+STR 0 0 0 4		//[4]=LEN[I]
+LDR 0 0 0 1		//R[0]=[1]
+SIR 0 1			//R[0]=[1]-1=COUNT1
+
+P:JZ 0 0 0 M	//IF COUNT1 == 0, BREAK LOOP
+STR 0 0 0 2		//[2]=COUNT1
+SIR 0 1			//R0=COUNT1-1
+STR 0 0 0 5
+AMR 0 0 0 5		//[5]=2*COUNT1-2
+LDR 0 0 0 5		//R0=2*COUNT1-2
+AIR 0 string0		//R0=STRING[J]
+AIR 0 1
+AIR 0 255			//R[0]=STRING[J]+256
+STR 0 0 0 5		//[5]=STRING[J]
+AIR 0 1			//R0=LEN[J]
+STR 0 0 0 6		//[6]=LEN[J]
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 N			//R[0]=RETURN ADDRESS
+STR 0 0 0 10	//[10]=RETURN ADDRESS
+JMP 0 1 COMPARE
+
+N:LDR 0 0 0 7		//R0=[7](RESULT OF COMPARE)
+JZ 0 0 0 O		//IF RESULT == 0, NO EXCHANGE
+LDR 1 0 0 3
+LDR 1 1 0 5
+STR 1 1 0 3
+STR 1 0 0 5		//[[3]]=[[5]], [[5]]=[[3]]
+LDR 1 0 0 4
+LDR 1 1 0 6
+STR 1 1 0 4
+STR 1 0 0 6		//[[4]]=[[6]], [[6]]=[[4]]
+O:LDR 0 0 0 2
+SIR 0 1			//COUNT1--
+JMP 0 0 P
+M:LDR 0 0 0 1
+SIR 0 1			//COUNT--
+JMP 0 0 Q
+
+
+/********************************OUTPUT 10 SORTED STRINGS****************************/
+L: LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 string0
+AIR 0 255
+AIR 0 1
+STR 0 0 0 2		//ADDRESS[2]=STRING0
+AIR 0 1
+STR 0 0 0 1		//ADDRESS[1]=LEN
+LDR 0 0 0 0
+SMR 0 0 0 0		//R[0]=0;
+AIR 0 10		//R[0]=10;
+R:JZ 0 0 0 S		//R[0]==0, BREAK LOOP
+STR 0 0 0 4		//ADDRESS[4]=COUNT
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 T			//R[0]=J
+STR 0 0 0 3		//ADDRESS[3]=RETURN ADDRESS
+JMP 0 0 D
+T:LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 10
+OUT 0 1			//OUTPUT '\N'
+LDR 0 0 0 4
+SIR 0 1			//COUNT--
+JMP 0 0 R
+
+/****************************OUTPUT STRING3*****************************************/
+S:LDR 0 1 1 LEN3		/*********PRINT STRING 1*******************/
+STR 0 1 0 1		//STORE STRING3'S LEN IN ADDRESS[1]
+LDR 0 1 1 STRING3
+STR 0 1 0 2		//STORE STRING3'S ADDRESS IN ADDRESS[2]
+LDR 0 1 0 0
+SMR 0 1 0 0		//CLEAR R[1]
+AIR 1 U
+STR 0 1 0 3		//STORE RETURN ADDRESS
+JMP 0 0 D		//PRINT STRING
+
+/****************************INPUT 1 STRING****************************************/
+U: LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 string10		//R[0]=STRING10
+AIR 0 1
+AIR 0 255
+STR 0 0 0 3			//[3]=STRING10
+LDR 0 1 0 3			//R[1]=STRING10
+AIR 1 2				//R[1]=STRING10+2
+STR 1 0 0 3			//[[3]]=STRING10+2
+AIR 0 1				//R[0]++
+STR 0 0 0 4			//[4]=LEN10
+LDR 0 0 0 0
+SMR 0 0 0 0
+STR 1 0 0 4			//[[4]]=0
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 V
+STR 0 0 0 2		//[2]=RETURN ADDRESS
+JMP 0 0 G
+
+/**********GO THROUGH STRING ARRARY, FIND THE STRING CONTAIN THE LAST INPUT STRING**********/
+V:LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 string10
+AIR 0 1
+AIR 0 255
+STR 0 0 0 8		//[8]=STRING10
+AIR 0 1
+STR 0 0 0 9		//[9]=LEN10
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 10		//R[0]=10
+X:JZ 0 0 0 W	//IF COUNT == 0, BREAK LOOP
+STR 0 0 0 4		//[4]=10=COUNT
+LDR 0 0 0 4
+SIR 0 1
+STR 0 0 0 5
+AMR 0 0 0 5		//R[0]=2*COUNT-2
+LDR 0 0 0 5		//[5]=STRING[I]
+AIR 0 1
+LDR 0 0 0 6		//[6]=LEN[I]
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 AA
+STR 0 0 0 10	//[10]=RETURN ADDRESS
+JMP 0 1 SUB
+AA:LDR 0 0 0 7
+JGE 0 0 0 OUTPUT
+LDR 0 0 0 4
+SIR 0 1		//COUNT--
+JMP 0 0 X
+OUTPUT: LDR 0 0 0 6
+STR 0 0 0 1		//[1]=[6]
+LDR 0 0 0 5	
+STR 0 0 0 2		//[2]=[5]
+LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 Z
+STR 0 0 0 3		//[3]=RETURN ADDRESS
+JMP 0 0 D			//OUTPUT
+Z: LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 10
+OUT 0 1			//OUTPUT '\N'
+JMP 0 0 X
+W:JMP 0 1 END
+
+
+
+
+/****PRINT STRING****PARAMETER: 1(LEN) 2(ADDRESS) 3(RETURN ADDRESS)***REGISTER:0 1 2*/
+D:LDR 0 1 0 1		//LEN -> R[1]
+LDR 0 2 0 2			//ADDRESS -> R[2]
+LABEL1:JZ 0 1 0 LABEL0		//IF R[1]==0, JMP
+SIR 1 1		//LEN-- -> R[1]
+STR 0 2 0 4		//ADDRESS -> 4
+LDR 1 0 0 4		//[[4]]->R[0]
+OUT 0 1		//PRINT R[0]
+AIR 2 1		//ADDRESS++ -> R[2]
+JMP 0 0 LABEL1		//LOOP
+LABEL0: JMP 1 0 3		//RETURN
+
+/****INPUT STRING*****PARAMETER: 1(COUNTER) 2(RETURN ADDRESS) 3(STRING0) 4(LEN0)***REGISTER: 0 1 2 3
+G: LDR 0 0 0 0
+SMR 0 0 0 0		//R[0]=0
+LABEL21:IN 3 0		//R[3]<--CHAR
+LDR 0 2 0 0
+SMR 0 2 0 0
+AIR 2 32	//R[2]=' '
+TRR 2 3
+JCC 0 3 1 LABEL12
+LDR 0 2 0 0
+SMR 0 2 0 0
+AIR 2 10	//R[2]='\n'
+TRR 2 3
+JCC 0 3 1 LABEL12
+LDR 0 2 0 0
+SMR 0 2 0 0
+AIR 2 64		//R[2]='A'-1
+STR 0 3 0 5		//ADDRESS[5]=CHAR
+SMR 0 2 0 5		//R[2]=R[2]-R[3]
+JGE 0 2 1 LABEL_CHAR_ERROR
+LDR 0 2 0 5		//R[2]=R[3]
+SIR 2 123		//R[2]-'z'-1
+JGE 0 2 1 LABEL_CHAR_ERROR
+LDR 0 2 0 5		//R[2]=R[3]
+SIR 2 97		//R[2]-'a'-1
+JGE 0 2 1 LABEL_RIGHT
+LDR 0 2 0 0
+SMR 0 2 0 0
+AIR 2 90		//R[2]='Z'
+SMR 0 2 0 5		//R[2]=R[2]-R[3]
+JGE 0 2 1 LABEL_RIGHT
+JMP 0 1 LABEL_CHAR_ERROR
+LABEL_RIGHT: LDR 1 2 0 3
+AMR 1 2 0 4
+STR 0 2 0 5
+STR 1 3 0 5
+LDR 1 2 0 4
+AIR 2 1
+STR 1 2 0 4
+JMP 0 1 LABEL21
+LABEL12: JMP 1 0 2		//RETURN
+/******************ERROR INFORMATION*******************/
+LABEL_CHAR_ERROR: LDR 0 1 1 LEN2
+STR 0 1 0 1		//STORE STRING1'S LEN IN ADDRESS[1]
+LDR 0 1 1 STRING2
+STR 0 1 0 2		//STORE STRING1'S ADDRESS IN ADDRESS[1]
+LDR 0 1 0 0
+SMR 0 1 0 0		//CLEAR R[1]
+AIR 1 END
+AIR 1 255
+AIR 1 1
+STR 0 1 0 3		//STORE RETURN ADDRESS
+JMP 0 0 D		//PRINT STRING
+
+
+
+/*************COMPARE******PARAMETER:3 4 5 6 10(RETURN ADDRESS)************************/
+COMPARE:LDR 0 0 0 0
+SMR 0 0 0 0
+LDR 0 1 0 0
+SMR 0 1 0 0				//R[0]=R[1]=0
+LABEL11: LDR 1 2 0 4		//R[2]=[[4]]
+TRR 0 2					//COMPARE R[2], R[0]
+JCC 0 0 1 LABEL_BREAK_LOOP
+LDR 1 2 0 6				//R[2]=[[6]]
+TRR 1 2					//COMPARE R[2], R[1]
+JCC 0 0 1 LABEL_BREAK_LOOP
+STR 0 0 0 11			//[11]=R[0]
+LDR 1 2 0 3				//R[2]=[[3]]
+AMR 0 2 0 11			//R[2]=R[0]+R[2]
+STR 0 0 0 12			//[12]=R[1]
+LDR 1 3 0 5				//R[3]=[[5]]
+AMR 0 3 0 12			//R[3]=R[1]+R[3]
+STR 0 2 0 11			//[11]=R[2]
+STR 0 3 0 12			//[12]=R[3]
+LDR 1 2 0 11			//R[2]=[R[2]]
+LDR 1 3 0 12			//R[3]=[R[3]]
+TRR 2 3					//COMPARE R[2],R[3]
+JCC 0 0 1 LABEL_CONTINUE
+LDR 0 3 0 12			//[12]=R[3]
+SMR 0 2 0 12			//R[2]=R[2]-R[3]
+JGE 0 2 1 LABEL_HIGH
+LABEL_LOW: LDR 0 0 0 0
+SMR 0 0 0 0
+STR 0 0 0 7				//[7]=0
+JMP 0 1 LABEL_RETURN1
+LABEL_HIGH: LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 1
+STR 0 0 0 7				//[7]=1
+JMP 0 1 LABEL_RETURN1
+LABEL_CONTINUE:	AIR 0 1
+AIR 1 1					//R[0]++, R[1]++
+JMP 0 1 LABEL11
+
+LABEL_BREAK_LOOP: LDR 1 2 0 4	//R[2]=[[4]]
+TRR 0 2
+JCC 0 0 1 LABEL_LOW
+JMP 0 1 LABEL_HIGH
+LABEL_RETURN1:	JMP 1 0 10
+
+
+/**************************SUB**********************************************************/
+SUB: LDR 0 0 0 0
+SMR 0 0 0 0			//R[0]=0
+LABEL13: STR 0 0 0 11		//[11]=R[0]
+LDR 0 2 0 9			//R[2]=[9]
+AMR 0 2 0 11		//R[2]=[9]+R[0]
+SMR 0 2 0 6			//R[2]=[9]+R[0]-[6]
+JGE 0 2 1 LABEL_BREAK_LOOP2		//COMPARE R[0], LEN[0]
+LDR 0 1 0 0
+SMR 0 1 0 0			//R[1]=0
+
+
+LABEL2: STR 0 0 0 11	//[11]=R[0]
+STR 0 1 0 12			//[12]=R[1]
+LDR 0 2 0 11
+AMR 0 2 0 12			//R[2]=[11]+[12]=R[0]+R[1]
+LDR 0 3 0 9				//R[3]=[9]
+TRR 2 3
+JCC 0 0 1 LABEL_BREAK_LOOP1	//COMPARE R[0]+R[1], LEN[1]
+
+
+LDR 1 2 0 5
+STR 0 0 0 11
+AMR 0 2 0 11		//R[2]=R[0]+[5]
+STR 0 1 0 11
+AMR 0 2 0 11		//R[2]=R[0]+R[1]+[5]
+STR 0 2 0 11
+LDR 1 2 0 11		//R[2]=[R[2]]
+LDR 1 3 0 8
+STR 0 1 0 12
+AMR 0 3 0 12		//R[3]=R[1]+[8]
+STR 0 3 0 12
+LDR 1 3 0 12		//R[3]=[R[3]]
+TRR 2 3
+JCC 0 0 1 LABEL_CONTINUE1
+JMP 0 1 NEXT_LOOP
+LABEL_CONTINUE1: AIR 1 1		//R[1]++
+JMP 0 1 LABEL2
+NEXT_LOOP: AIR 0 1			//R[0]++
+JMP 0 1 LABEL13
+LABEL_BREAK_LOOP1: LDR 0 0 0 0
+SMR 0 0 0 0
+AIR 0 1
+LDR 0 0 0 7					//[7]=1
+JMP 0 1 LABEL_RETURN
+LABEL_BREAK_LOOP2: LDR 0 0 0 0
+SMR 0 0 0 0
+LDR 0 0 0 7					//[7]=0
+LABEL_RETURN: JMP 1 0 10	//RETURN
+
+
+/******************************END OF THE PROGRAM***************************************/
+END:00
+
+
+LEN1:021
+STRING1:STRING1_
+STRING1_:I
+n
+p
+u
+t
+032
+1
+0
+032
+w
+o
+r
+d
+s
+032
+h
+e
+r
+e
+:
+010
+LEN2:015
+STRING2: STRING2_
+STRING2_:S
+I
+n
+p
+u
+t
+032
+e
+r
+r
+o
+r
+!
+!
+!
+010
+LEN3:20
+STRING3:STRING3_
+STRING3_:I
+n
+p
+u
+t
+032
+1
+032
+w
+o
+r
+d
+s
+032
+h
+e
+r
+e
+:
+010
+string0:DATA0
+len0:00
+string1:00
+len1:00
+string2:00
+len2:00
+string3:00
+len3:00
+string4:00
+len4:00
+string5:00
+len5:00
+string6:00
+len6:00
+string7:00
+len7:00
+string8:00
+len8:00
+string9:00
+len9:00
+string10:00
+len10:00
+DATA0:00

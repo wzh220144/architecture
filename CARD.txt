@@ -1,3 +1,13 @@
+JMP 0 0 START
+
+
+
+
+
+
+ 
+ 
+ 
 
 A:022
 STRING1
@@ -89,11 +99,9 @@ JMP 0 0 D		//PRINT STRING
 
 I:LDR 0 0 0 0		/**************INPUT 1 NUMBER**********************/
 SMR 0 0 0 0		//R[0]=0
-AIR 0 J			//R[0]=RETURN ADDRESS
+AIR 0 END			//R[0]=RETURN ADDRESS
 STR 0 0 0 2		//SOTRE R[0] IN ADDRESS[2]
 JMP 0 0 G		//INPUT NUMBER
-
-J:
 
 /****PRINT STRING****PARAMETER: 1(LEN) 2(ADDRESS) 3(RETURN ADDRESS)***REGISTER:0 1 2*/
 D: LDR 0 1 0 1		//LEN -> R[1]

@@ -136,8 +136,6 @@ public class Compiler {
 				
 				else if (tString[i].equals("LDX")) {
 					instruction += 33 << 14;
-					System.out.println("Case "+i+":");
-					System.out.println(instruction);
 				}
 				else if (tString[i].equals("STX")) {
 					instruction += 34 << 14;

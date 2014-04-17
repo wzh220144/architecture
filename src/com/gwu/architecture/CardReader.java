@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CardReader {
 	
@@ -93,13 +95,15 @@ public class CardReader {
 		InputStreamReader reader = new InputStreamReader(inputStream);
 		tchar = new char[inputStream.available()];
 		reader.read(tchar);
-		tString = "asdfasf";
 		tString = new String(tchar);
+		
+		//delete comments in assembly language
 		tString = tString.replaceAll("(\r\n)+", "\n");
 		tString= tString.replaceAll("\r", "\n");
 		tString = tString.replaceAll("[ \t]*/.*", "");
 		tString = tString.replaceAll("\n+", "\n");
 		tStrings = tString.split("\n");
+		
 		fileLength = tStrings.length;
 		cardStrings = new String[fileLength+1];
 		reader.close();
@@ -107,36 +111,47 @@ public class CardReader {
 		Vector<String> tVector = new Vector<String>();
 		tVector.clear();
 		tmap.clear();
-		for(int i=0; i<fileLength; i++) {
+		
+		for(int i=0; i<fileLength; i++) {		//store the actual address with its label, using map class
 			if(tStrings[i].matches("^.+:.+") == true) {
 				String key = tStrings[i].split(":")[0];
-				int value;
-				if(i>255)
-					value = i-256;
-				else
-					value = i;
+				int value=i;
+				value = i%255;					//compute the true address, address cannot be larger than 255
 				assert tmap.containsKey(key) == false;
 					
 				tmap.put(key, Integer.toString(value));
 				tVector.add(key);
 			}
 		}
+		
 		int vlen = tVector.size();
-	//	for(int j=0; j<vlen; j++) {
-			//System.out.println(tVector.get(j) + " " + tmap.get(tVector.get(j)));
-		//}
-		//System.out.println();
+		
 		for(int i=0; i<fileLength; i++) {
-			tStrings[i] = tStrings[i].replaceAll("^.+:[ \t]*", "");
+			tStrings[i] = tStrings[i].replaceAll("^.+:[ \t]*", "");		//delete label with ':'
 			//System.out.println(tStrings[i]);
 			for(int j=0; j<vlen; j++) {
+				//replace label with its actual address when it does not need to compute the additional compute
 				tStrings[i]=tStrings[i].replaceAll("[ \t]+" + tVector.get(j) + "[ \t]+" , " "  + tmap.get(tVector.get(j)) + " " );
 				tStrings[i]=tStrings[i].replaceAll("^" + tVector.get(j) + "[ \t]+" , tmap.get(tVector.get(j)) + " " );
 				tStrings[i]=tStrings[i].replaceAll("[ \t]+" + tVector.get(j) + "$", " "  + tmap.get(tVector.get(j)));
-				tStrings[i]=tStrings[i].replaceAll("^" + tVector.get(j) + "$", "0"+tmap.get(tVector.get(j)));
+				tStrings[i]=tStrings[i].replaceAll("^" + tVector.get(j) + "$", "0"+tmap.get(tVector.get(j))); 
+				
+				//replace label with its actual address when it needs to compute the additional compute
+				tStrings[i]=tStrings[i].replaceAll("[ \t]+" + tVector.get(j) + "\\+" , " "  + tmap.get(tVector.get(j)) + "+" );
+				tStrings[i]=tStrings[i].replaceAll("\\+" + tVector.get(j) + "[ \t]" , "+"  + tmap.get(tVector.get(j)) + " " );
+				tStrings[i]=tStrings[i].replaceAll("^" + tVector.get(j) + "\\+" , tmap.get(tVector.get(j)) + "+" );
+				tStrings[i]=tStrings[i].replaceAll("\\+" + tVector.get(j) + "$" , "+" + tmap.get(tVector.get(j)) );
+			}
+			Pattern p = Pattern.compile("[0-9]+\\+[0-9]+");
+			Matcher m = p.matcher(tStrings[i]);
+			while(m.find()) {				//compute the additional compute on address identified by '+' in assembly language
+				String ttStrings[] = m.group().split("\\+");
+				int a = Integer.parseInt(ttStrings[0]), b = Integer.parseInt(ttStrings[1]);
+				tStrings[i] = tStrings[i].replaceAll(ttStrings[0] + "\\+" + ttStrings[1], "0"+Integer.toString(a+b));
 			}
 			System.out.println(tStrings[i]);
 			cardStrings[i] = new String(Compiler.AssemblyToInteger(tStrings[i]));
+			//System.out.println(cardStrings[i]);
 		}
 	}
 	

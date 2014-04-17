@@ -296,6 +296,7 @@ public class InputPanel extends JPanel {
 		flag = 0;
 		for (int i = 0; i < 14; i++)
 			append(textField[i], "");
+		append(textField[16], "");
 	}
 
 	public void destroy() {

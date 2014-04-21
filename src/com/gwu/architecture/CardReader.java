@@ -126,6 +126,9 @@ public class CardReader {
 		
 		int vlen = tVector.size();
 		
+		for(int i=0; i<vlen; i++)
+			System.out.println(tVector.get(i) + " " + tmap.get(tVector.get(i)));
+		
 		for(int i=0; i<fileLength; i++) {
 			tStrings[i] = tStrings[i].replaceAll("^.+:[ \t]*", "");		//delete label with ':'
 			//System.out.println(tStrings[i]);
@@ -147,7 +150,8 @@ public class CardReader {
 			while(m.find()) {				//compute the additional compute on address identified by '+' in assembly language
 				String ttStrings[] = m.group().split("\\+");
 				int a = Integer.parseInt(ttStrings[0]), b = Integer.parseInt(ttStrings[1]);
-				tStrings[i] = tStrings[i].replaceAll(ttStrings[0] + "\\+" + ttStrings[1], "0"+Integer.toString(a+b));
+				tStrings[i] = tStrings[i].replaceAll("^" + ttStrings[0] + "\\+" + ttStrings[1], "0"+Integer.toString(a+b));
+				tStrings[i] = tStrings[i].replaceAll(ttStrings[0] + "\\+" + ttStrings[1], Integer.toString(a+b));
 			}
 			System.out.println(tStrings[i]);
 			cardStrings[i] = new String(Compiler.AssemblyToInteger(tStrings[i]));

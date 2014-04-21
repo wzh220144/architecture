@@ -185,6 +185,8 @@ public class Cpu {
 		R[1].value = 0;
 		R[2].bits = 20;
 		R[2].value = 0;
+		R[3].bits = 20;
+		R[3].value = 0;
 		OP[0].bits = 20;
 		OP[0].value = 0;
 		OP[1].bits = 20;

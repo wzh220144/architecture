@@ -86,12 +86,12 @@ public class Computer {
 		execute();
 		storeResult();
 		nextInstruction();
-	}
+	} 
 	
 	public void run() {		//fuction for switch run
 		while(true) {
-			//if(gwuCpu.PC.value==83)
-				//break;
+			//if(gwuCpu.PC.value==202)
+			//	break;
 			fetchInstruction();	
 			decode();
 			if(gwuCpu.IR.value==0)

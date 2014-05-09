@@ -21,6 +21,25 @@ public class Cpu {
 				return value;
 			}
 		}
+		
+		public int TrueExponent() {
+			if( (value&Power[5])==Power[5] ) {
+				value|=Mark[31]^Mark[5];
+			}
+			return value;
+		}
+		
+		public double FloatValue() {
+			transfer(TEMP, value);
+			transfer(OP[0], TEMP, 1, 6);
+			double a=OP[0].TrueExponent();		//exponent
+			transfer(OP[0], TEMP, 7, 19);
+			double b=OP[0].value;				//mantissa
+			transfer(OP[0], TEMP, 0, 0);
+			if(OP[0].value==1)
+				b=-b;
+			return b*Math.pow(2.0, a);
+		}
 	}
 
 	int[] Mark;
@@ -31,7 +50,9 @@ public class Cpu {
 	Register PC;
 	Register IR;
 	Register EA;
+	Register EA1;
 	Register TEMP;
+	Register TEMP1;
 	Register COUNT;
 	Register CONTRL;
 
@@ -60,6 +81,10 @@ public class Cpu {
 	Register AL;
 	Register LR;
 	Register DEV;
+	
+	Register[] FR;
+	
+	Register FRI;
 
 	/*****************************************************************************/
 
@@ -78,7 +103,9 @@ public class Cpu {
 		PC = new Register(0, 13);
 		IR = new Register(0, 20);
 		EA = new Register(0, 13);
+		EA1 = new Register(0, 13);
 		TEMP = new Register(0, 20);
+		TEMP1 = new Register(0, 20);
 		COUNT = new Register(0, 5);
 		CONTRL = new Register(0, 6);
 		MAR = new Register(0, 13);
@@ -109,6 +136,13 @@ public class Cpu {
 		for (int i = 0; i < 2; i++)
 			RES[i] = new Register(0, 20);
 
+		FR = new Register[2];
+		for(int i = 0; i < 2; i++) {
+			FR[i] = new Register(0, 20);
+		}
+		
+		FRI = new Register(0, 2);
+		
 		Mark = new int[40];
 		Power = new int[40];
 		Power[0] = 1;
@@ -117,7 +151,8 @@ public class Cpu {
 		for (int i = 0; i < 31; i++)
 			Mark[i] = Power[i + 1] - 1;
 		Mark[31]=-1;
-
+		
+		
 	}
 
 	public void powerdown() { // shutdown the computer
@@ -147,8 +182,12 @@ public class Cpu {
 		IR.bits = 20;
 		EA.value = 0;
 		EA.bits = 13;
+		EA1.value = 0;
+		EA1.bits = 13;
 		TEMP.value = 0;
 		TEMP.bits = 20;
+		TEMP1.value = 0;
+		TEMP1.bits = 20;
 		COUNT.value = 0;
 		COUNT.bits = 5;
 		CONTRL.value = 0;
@@ -196,7 +235,14 @@ public class Cpu {
 		RES[0].value = 0;
 		RES[1].bits = 20;
 		RES[1].value = 0;
-
+		
+		FR[0].bits = 20;
+		FR[0].value = 0;
+		FR[1].bits = 20;
+		FR[1].value = 0;
+		
+		FRI.bits = 2;
+		FRI.value = 0;
 
 	}
 
@@ -325,6 +371,111 @@ public class Cpu {
 		gwuMemory.storeData(MAR.value, MBR.value);
 	}
 	
+	/**************************************float function**********************************/
+	int floatAdd() {
+		transfer(OP[0], TEMP, 1, 6);
+		transfer(OP[1], TEMP1, 1, 6);
+		int a=OP[0].TrueExponent();		//exponent
+		int b=OP[1].TrueExponent();
+		int rexponent=0;
+		transfer(OP[0], TEMP, 7, 19);
+		transfer(OP[1], TEMP1, 7, 19);
+		int c=OP[0].value;				//mantissa
+		int d=OP[1].value;
+		int rmatissa=0;
+		transfer(OP[0], TEMP, 0, 0);
+		transfer(OP[1], TEMP1, 0, 0);
+		if(OP[0].value==1)
+			c=-c;
+		if(OP[1].value==1)
+			d=-d;
+		
+		if(a<b) {
+			c>>=(b-a);
+			rexponent=b;
+		}
+		else if(a>b) {
+			d>>=(a-b);
+			rexponent=a;
+		}
+		else rexponent = a;
+		
+		//compute matissa, set flag
+		rmatissa = c+d;
+		if( rmatissa>Mark[12] ) {
+			
+			rmatissa>>=1;
+			if(rexponent==15) {
+				transfer(CC, CC.value|Power[3]);
+				rexponent=-16;
+			}
+			else {
+				rexponent++;
+			}
+		}
+		
+		//store in FR[FRI]
+		int res=0;
+		if(rmatissa<0) {
+			rmatissa=-rmatissa;
+			res=1<<19;
+		}
+		res+=(rmatissa&Mark[13])+((rexponent&Mark[5])<<13);
+		return res;
+	}
+	
+	int floatSub() {
+		transfer(OP[0], TEMP, 1, 6);
+		transfer(OP[1], TEMP1, 1, 6);
+		int a=OP[0].TrueExponent();		//exponent
+		int b=OP[1].TrueExponent();
+		int rexponent=0;
+		transfer(OP[0], TEMP, 7, 19);
+		transfer(OP[1], TEMP1, 7, 19);
+		int c=OP[0].value;				//mantissa
+		int d=OP[1].value;
+		int rmatissa=0;
+		transfer(OP[0], TEMP, 0, 0);
+		transfer(OP[1], TEMP1, 0, 0);
+		if(OP[0].value==1)
+			c=-c;
+		if(OP[1].value==1)
+			d=-d;
+		d=-d;
+		
+		if(a<b) {
+			c>>=(b-a);
+			rexponent=b;
+		}
+		else if(a>b) {
+			d>>=(a-b);
+			rexponent=a;
+		}
+		else rexponent = a;
+		
+		//compute matissa, set flag
+		rmatissa = c+d;
+		if( rmatissa<-Mark[12] ) {
+			
+			rmatissa>>=1;
+			if(rexponent==15) {
+				transfer(CC, CC.value|Power[2]);
+				rexponent=-16;
+			}
+			else {
+				rexponent++;
+			}
+		}
+		
+		//store in FR[FRI]
+		int res=0;
+		if(rmatissa<0) {
+			rmatissa=-rmatissa;
+			res=1<<19;
+		}
+		res+=(rmatissa&Mark[13])+((rexponent&Mark[5])<<13);
+		return res;
+	}
 
 	/**************************************micro-instruction*******************************/
 	/*
@@ -355,15 +506,19 @@ public class Cpu {
 
 	public void effAddress(Memory gwuMemory) { // compute effective address
 		transfer(EA, ADDRESS);
+		transfer(EA1, EA.value+1);
+		
 		if(XI.value!=0) {
 			transfer(OP[0], EA);
 			transfer(OP[1], X[XI.value-1]);
 			transfer(CONTRL, OPCODE);
 			transfer(RES[0], OP[0].value+OP[1].value);
 			transfer(EA, RES[0]);
+			transfer(EA1, EA.value+1);
 		}
 		if (I.value == 1) {
 			fetchData(EA, EA, gwuMemory);
+			fetchData(EA1, EA1, gwuMemory);
 		}
 		
 	}
@@ -727,7 +882,127 @@ public class Cpu {
 			transfer(R[RI.value], gwuIO.chk(DEV.value));
 		}//CHK r, devid
 		
+		/*************************************vector/float************************************************/
+		//FADD I FR X ADDRESS
+		else if(OPCODE.value==27) {
+			
+			transfer(FRI, RI);
+			transfer(TEMP, FR[FRI.value]);
+			fetchData(EA, TEMP1, gwuMemory);
+			transfer(FR[FRI.value], floatAdd());
+			
+		}//FADD I FR X ADDRESS
+		
+		//FSUB I FR X ADDRESS
+		else if(OPCODE.value==28) {
 
+			transfer(FRI, RI);
+			transfer(TEMP, FR[FRI.value]);
+			fetchData(EA, TEMP1, gwuMemory);
+			transfer(FR[FRI.value], floatSub());
+			
+		}//FSUB I FR X ADDRESS
+		
+		//VADD I FR X ADDRESS
+		else if(OPCODE.value==29) {
+			transfer(FRI, RI);
+			int l;
+			if(I.value==1) {
+				fetchData(FR[FRI.value], TEMP, gwuMemory);
+				l=TEMP.value;
+			}
+			else {
+				l=FR[FRI.value].value;
+			}
+			
+			fetchData(EA, TEMP, gwuMemory);
+			fetchData(EA1, TEMP1, gwuMemory);
+			int a = TEMP.value, b = TEMP1.value;
+			
+			for(int i=0; i<l; i++) {
+				transfer(EA, a);
+				transfer(EA1, b);
+				fetchData(EA, TEMP, gwuMemory);
+				fetchData(EA1, TEMP1, gwuMemory);
+				transfer(TEMP, floatAdd());
+				storeData(EA, TEMP, gwuMemory);
+				a++;
+				b++;
+			}
+		}//VADD I FR X ADDRESS
+		
+		//VSUB I FR X ADDRESS
+		else if(OPCODE.value==30) {
+			transfer(FRI, RI);
+			int l;
+			if(I.value==1) {
+				fetchData(FR[FRI.value], TEMP, gwuMemory);
+				l=TEMP.value;
+			}
+			else {
+				l=FR[FRI.value].value;
+			}
+			fetchData(EA, TEMP, gwuMemory);
+			fetchData(EA1, TEMP1, gwuMemory);
+			int a = TEMP.value, b = TEMP1.value;
+			
+			for(int i=0; i<l; i++) {
+				transfer(EA, a);
+				transfer(EA1, b);
+				fetchData(EA, TEMP, gwuMemory);
+				fetchData(EA1, TEMP1, gwuMemory);
+				transfer(TEMP, floatSub());
+				storeData(EA, TEMP, gwuMemory);
+				a++;
+				b++;
+			}
+		}//VSUB I FR X ADDRESS
+		
+		//CNVRT I R X ADDRESS
+		else if(OPCODE.value==31) {
+			fetchData(EA, TEMP, gwuMemory);
+			if(XI.value==0) {
+				transfer(OP[0], TEMP, 1, 6);
+				double a=OP[0].TrueExponent();		//exponent
+				transfer(OP[0], TEMP, 7, 19);
+				double b=OP[0].value;				//mantissa
+				transfer(OP[0], TEMP, 0, 0);
+				if(OP[0].value==1)
+					b=-b;
+				double v = b*Math.pow(2.0, a);
+				int t = (int)v;
+				transfer(R[RI.value], t);
+			}
+			else {
+				int res = 0;
+				int exponent = 0;
+				int t = TEMP.TrueValue();
+				if(t<0) {
+					res+=Power[19];
+					t=-t;
+				}
+				while(t>Mark[12]) {
+					exponent++;
+					t>>=1;
+				}
+				res = res + ((exponent&Mark[5])<<13) + t;
+				transfer(FR[FRI.value], t);
+
+			}
+		}//CNVRT I R X ADDRESS
+		
+		//LDFR I FR X ADDRESS
+		else if(OPCODE.value==32) {
+			transfer(FRI, RI);
+			fetchData(EA, FR[FRI.value], gwuMemory);
+		}//LDFR I FR X ADDRESS
+		
+		//STFR I FR X ADDRESS
+		else if(OPCODE.value==35) {
+			transfer(FRI, RI);
+			storeData(EA, FR[FRI.value], gwuMemory);
+		}//STFR I FR X ADDRESS
+		
 	}
 
 	public void storeResult(Memory gwuMemory, IO gwuIO) {
@@ -754,12 +1029,12 @@ public class Cpu {
 		IO gwuIO = new IO();
 		gwuMemory.powerup();
 		gwuIO.powerup();
-		aCpu.transfer(aCpu.R[0], -131073);
-		System.out.println(Compiler.DecimalToBinary(Integer.toString(-1)));
-		aCpu.OPCODE.value=26;
-		aCpu.I.value=1;
-		aCpu.T.value=1;
-		aCpu.ADDRESS.value=2;
+		aCpu.EA.value=0;
+		aCpu.TEMP.value=(1<<13)+1;
+		aCpu.storeData(aCpu.EA, aCpu.TEMP, gwuMemory);
+		aCpu.transfer(aCpu.FR[0], (3<<13)+2);
+		aCpu.transfer( aCpu.IR, Integer.parseInt( Compiler.AssemblyToInteger("FADD 0 0 0 0") ) );
+		aCpu.decode();
 		aCpu.execute(gwuMemory, gwuIO);
 	}
 

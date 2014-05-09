@@ -32,7 +32,7 @@ public class InputPanel extends JPanel {
 		layout = new GridBagLayout();
 		constraints = new GridBagConstraints();
 
-		label = new JLabel[17];
+		label = new JLabel[20];
 		label[0] = new JLabel("PC:");
 		label[1] = new JLabel("IR(decimal):");
 		label[2] = new JLabel("XI:");
@@ -49,9 +49,12 @@ public class InputPanel extends JPanel {
 		label[13] = new JLabel("R[3]:");
 		label[14] = new JLabel("IR(binary):");
 		label[15] = new JLabel("IR(assembly):");
-		label[16]= new JLabel("CC:");
+		label[16] = new JLabel("CC:");
+		label[17] = new JLabel("FR[0]:");
+		label[18] = new JLabel("FR[1]:");
+		label[19] = new JLabel("FRI:");
 
-		textField = new JTextField[17];
+		textField = new JTextField[20];
 		textField[0] = new JTextField(10);
 		textField[1] = new JTextField(10);
 		textField[2] = new JTextField(10);
@@ -69,12 +72,51 @@ public class InputPanel extends JPanel {
 		textField[14] = new JTextField(10);
 		textField[15] = new JTextField(10);
 		textField[16] = new JTextField(10);
+		textField[17] = new JTextField(10);
+		textField[18] = new JTextField(10);
+		textField[19] = new JTextField(10);
 
 		button = new JButton[3];
 		button[0] = new JButton("save");
 		button[1] = new JButton("save");
 		button[2] = new JButton("save");
 
+	}
+	
+	int FloatToBinary(double a) {
+		int res=0;
+		if(a<0) {
+			res=gwuCpu.Power[19];
+			a=-a;
+		}
+		int exponent = 0;
+		int IntegerPart = (int)a;
+		double FloatPart = a-(double)IntegerPart;
+		int t=IntegerPart;
+		while(t>0) {
+			t>>=1;
+			exponent++;
+		}
+		if(exponent>=13) {
+			exponent = exponent-13;
+			IntegerPart>>=exponent;
+			res+=IntegerPart+((exponent&gwuCpu.Mark[5])<<13);
+		}
+		else {
+			exponent = exponent-13;
+			IntegerPart<<=(-exponent);
+			res+=IntegerPart+((exponent&gwuCpu.Mark[5])<<13);
+			exponent = -exponent;
+			while(exponent>0) {
+				exponent--;
+				FloatPart*=2.0;
+				if(FloatPart>=1.0) {
+					IntegerPart+=gwuCpu.Power[exponent];
+					FloatPart-=1.0;
+				}
+			}
+		}
+		return res;
 	}
 
 	public void init(Computer computer) {
@@ -167,25 +209,42 @@ public class InputPanel extends JPanel {
 		add(label[16], constraints);
 		setConstraints(1, 14, 1, 1, 4, 3);
 		add(textField[16], constraints);
+		
+		//FR[0], FR[1], FRI
+		setConstraints(0, 15, 1, 1, 4, 3);
+		add(label[17], constraints);
+		setConstraints(1, 15, 1, 1, 4, 3);
+		add(textField[17], constraints);
+				
+		setConstraints(0, 16, 1, 1, 4, 3);
+		add(label[18], constraints);
+		setConstraints(1, 16, 1, 1, 4, 3);
+		add(textField[18], constraints);
+				
+		setConstraints(0, 17, 1, 1, 4, 3);
+		add(label[19], constraints);
+		setConstraints(1, 17, 1, 1, 4, 3);
+		add(textField[19], constraints);
 
 		// save button
-		setConstraints(0, 15, 1, 1, 4, 3);
+		setConstraints(0, 18, 1, 1, 4, 3);
 		add(button[0], constraints);
 
 		// IR(binary)
-		setConstraints(0, 16, 1, 1, 4, 3);
+		setConstraints(0, 19, 1, 1, 4, 3);
 		add(label[14], constraints);
-		setConstraints(1, 16, 1, 1, 4, 3);
+		setConstraints(1, 19, 1, 1, 4, 3);
 		add(textField[14], constraints);
-		setConstraints(2, 16, 1, 1, 4, 3);
+		setConstraints(2, 19, 1, 1, 4, 3);
 		add(button[1], constraints);
 		// IR(assembly)
-		setConstraints(0, 17, 1, 1, 4, 3);
+		setConstraints(0, 20, 1, 1, 4, 3);
 		add(label[15], constraints);
-		setConstraints(1, 17, 1, 1, 4, 3);
+		setConstraints(1, 20, 1, 1, 4, 3);
 		add(textField[15], constraints);
-		setConstraints(2, 17, 1, 1, 4, 3);
+		setConstraints(2, 20, 1, 1, 4, 3);
 		add(button[2], constraints);
+		
 		
 		
 		/******************************init input panel's ui**********************************/
@@ -229,6 +288,12 @@ public class InputPanel extends JPanel {
 							Integer.parseInt(textField[13].getText()));
 					gwuCpu.transfer(gwuCpu.CC,
 							Integer.parseInt(textField[16].getText()));
+					gwuCpu.transfer(gwuCpu.FR[0],
+							FloatToBinary(Double.parseDouble(textField[17].getText())));
+					gwuCpu.transfer(gwuCpu.FR[1],
+							FloatToBinary(Double.parseDouble(textField[18].getText())));
+					gwuCpu.transfer(gwuCpu.FRI,
+							Integer.parseInt(textField[19].getText()));
 					refresh();
 				} else {
 
@@ -296,7 +361,8 @@ public class InputPanel extends JPanel {
 		flag = 0;
 		for (int i = 0; i < 14; i++)
 			append(textField[i], "");
-		append(textField[16], "");
+		for (int i = 16; i < 20; i++)
+			append(textField[i], "");
 	}
 
 	public void destroy() {
@@ -320,6 +386,9 @@ public class InputPanel extends JPanel {
 			append(textField[12], Integer.toString(gwuCpu.R[2].TrueValue()));
 			append(textField[13], Integer.toString(gwuCpu.R[3].TrueValue()));
 			append(textField[16], Integer.toString(gwuCpu.CC.TrueValue()));
+			append(textField[17], Double.toString(gwuCpu.FR[0].FloatValue()));
+			append(textField[18], Double.toString(gwuCpu.FR[1].FloatValue()));
+			append(textField[19], Integer.toString(gwuCpu.FRI.TrueValue()));
 
 		} else {
 

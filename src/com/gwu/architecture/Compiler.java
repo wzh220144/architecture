@@ -122,6 +122,11 @@ public class Compiler {
 				else if (tString[i].equals("ORR")) {
 					instruction += 20 << 14;
 				}
+				
+				else if (tString[i].equals("NOT")) {
+					instruction += 21 << 14;
+				}
+				
 				else if (tString[i].equals("SRC")) {
 					instruction += 25 << 14;
 				}
@@ -130,8 +135,32 @@ public class Compiler {
 					instruction += 26 << 14;
 				}
 				
-				else if (tString[i].equals("NOT")) {
-					instruction += 21 << 14;
+				else if (tString[i].equals("FADD")) {
+					instruction += 27<<14;
+				}
+
+				else if (tString[i].equals("FSUB")) {
+					instruction += 28<<14;
+				}
+				
+				else if (tString[i].equals("VADD")) {
+					instruction += 29<<14;
+				}
+				
+				else if (tString[i].equals("VSUB")) {
+					instruction += 30<<14;
+				}
+				
+				else if (tString[i].equals("CNVRT")) {
+					instruction += 31<<14;
+				}
+				
+				else if (tString[i].equals("LDFR")) {
+					instruction += 32<<14;
+				}
+				
+				else if (tString[i].equals("STFR")) {
+					instruction += 35<<14;
 				}
 				
 				else if (tString[i].equals("LDX")) {
@@ -166,7 +195,9 @@ public class Compiler {
 						break;
 					}
 					instruction += temp << 9;
-				} else if (opcode == 2) {
+				}
+				
+				else if (opcode == 2) {
 					if (temp > 1 || (temp < 0)) {
 						break;
 					}
@@ -319,6 +350,56 @@ public class Compiler {
 					}
 					instruction += temp << 9;
 				}
+				
+				else if (opcode == 27) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 9;
+				}
+				
+				else if (opcode == 28) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 9;
+				}
+				
+				else if (opcode == 29) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 9;
+				}
+				
+				else if (opcode == 30) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 9;
+				}
+				
+				else if (opcode == 31) {
+					if ((temp > 1) || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 9;
+				}
+				
+				else if (opcode == 32) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 9;
+				}
+				
+				else if (opcode == 35) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 9;
+				}
+				
 				
 				else if (opcode == 33) {
 					if (temp > 1 || (temp < 0)) {
@@ -516,6 +597,55 @@ public class Compiler {
 					}
 					instruction += temp << 8;
 				}
+				
+				else if (opcode == 27) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 10;
+				}
+				
+				else if (opcode == 28) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 10;
+				}
+				
+				else if (opcode == 29) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 10;
+				}
+				
+				else if (opcode == 30) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 10;
+				}
+				
+				else if (opcode == 31) {
+					if ((temp > 3) || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 10;
+				}
+				
+				else if (opcode == 32) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 10;
+				}
+				
+				else if (opcode == 35) {
+					if (temp > 1 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 10;
+				}
 
 				else if (opcode == 33) {
 					if ((temp > 3) || (temp < 0)) {
@@ -690,6 +820,55 @@ public class Compiler {
 					}
 					instruction += temp << 10;
 				}
+				
+				else if (opcode == 27) {
+					if (temp > 3 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 12;
+				}
+				
+				else if (opcode == 28) {
+					if (temp > 3 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 12;
+				}
+				
+				else if (opcode == 29) {
+					if (temp > 3 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 12;
+				}
+				
+				else if (opcode == 30) {
+					if (temp > 3 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 12;
+				}
+				
+				else if (opcode == 31) {
+					if ((temp > 3) || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 12;
+				}
+				
+				else if (opcode == 32) {
+					if (temp > 3 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 12;
+				}
+				
+				else if (opcode == 35) {
+					if (temp > 3 || (temp < 0)) {
+						break;
+					}
+					instruction += temp << 12;
+				}
 
 				else if (opcode == 33) {
 					if ((temp < 0) || (temp > 255)) {
@@ -845,6 +1024,55 @@ public class Compiler {
 				
 				else if (opcode == 26) {
 					if ((temp < 0) || (temp > 255)) {
+						break;
+					}
+					instruction += temp;
+				}
+				
+				else if (opcode == 27) {
+					if (temp > 255 || (temp < 0)) {
+						break;
+					}
+					instruction += temp;
+				}
+				
+				else if (opcode == 28) {
+					if (temp > 255 || (temp < 0)) {
+						break;
+					}
+					instruction += temp;
+				}
+				
+				else if (opcode == 29) {
+					if (temp > 255 || (temp < 0)) {
+						break;
+					}
+					instruction += temp;
+				}
+				
+				else if (opcode == 30) {
+					if (temp > 255 || (temp < 0)) {
+						break;
+					}
+					instruction += temp;
+				}
+				
+				else if (opcode == 31) {
+					if (temp > 255 || (temp < 0)) {
+						break;
+					}
+					instruction += temp;
+				}
+				
+				else if (opcode == 32) {
+					if (temp > 255 || (temp < 0)) {
+						break;
+					}
+					instruction += temp;
+				}
+				
+				else if (opcode == 35) {
+					if (temp > 255 || (temp < 0)) {
 						break;
 					}
 					instruction += temp;

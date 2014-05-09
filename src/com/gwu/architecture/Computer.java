@@ -91,7 +91,7 @@ public class Computer {
 	public void run() {		//fuction for switch run
 		while(true) {
 			//if(gwuCpu.PC.value==202)
-			//	break;
+				//break;
 			fetchInstruction();	
 			decode();
 			if(gwuCpu.IR.value==0)

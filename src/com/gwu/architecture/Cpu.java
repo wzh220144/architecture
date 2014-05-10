@@ -960,6 +960,7 @@ public class Cpu {
 		
 		//CNVRT I R X ADDRESS
 		else if(OPCODE.value==31) {
+			transfer(FRI, RI);
 			fetchData(EA, TEMP, gwuMemory);
 			if(XI.value==0) {
 				transfer(OP[0], TEMP, 1, 6);
@@ -986,7 +987,7 @@ public class Cpu {
 					t>>=1;
 				}
 				res = res + ((exponent&Mark[5])<<13) + t;
-				transfer(FR[FRI.value], t);
+				transfer(FR[FRI.value], res);
 
 			}
 		}//CNVRT I R X ADDRESS
